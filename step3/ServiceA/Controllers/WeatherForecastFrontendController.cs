@@ -43,11 +43,9 @@ public class WeatherForecastFrontendController : ControllerBase
             var filePath = await responseMessage.Content.ReadAsStringAsync();
             _logger.LogInformation("Reading forecast from {filePath}", filePath);
 
-            var payload = await System.IO.File.ReadAllLinesAsync(filePath);
-            
-            var parentContext = ActivityContext.Parse(payload[0], null);
-            using var activity = _activitySource.StartActivity("ProcessForecast", ActivityKind.Consumer, parentContext);
-            return JsonSerializer.Deserialize<IEnumerable<WeatherForecast>?>(payload[1], new JsonSerializerOptions(JsonSerializerDefaults.Web));
+            using var activity = _activitySource.StartActivity("ProcessForecast", ActivityKind.Consumer);
+            var json = await System.IO.File.ReadAllTextAsync(filePath);
+            return JsonSerializer.Deserialize<IEnumerable<WeatherForecast>?>(json, new JsonSerializerOptions(JsonSerializerDefaults.Web));
         }
 
         return null;

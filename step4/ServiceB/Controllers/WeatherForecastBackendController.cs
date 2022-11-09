@@ -38,7 +38,6 @@ public class WeatherForecastBackendController : ControllerBase
         
         using var activity = _activitySource.StartActivity(nameof(GetForecast), ActivityKind.Producer);
         var forecast = GetForecast();
-        writer.WriteLine(activity?.Id);
         writer.WriteLine(JsonSerializer.Serialize(forecast, new JsonSerializerOptions(JsonSerializerDefaults.Web)));
         _logger.LogInformation("Forecast written to {filePath}", filePath);
         activity?.SetTag("filePath", filePath);
